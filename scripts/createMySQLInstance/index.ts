@@ -1,5 +1,10 @@
-import { $, path } from "zx";
+#! ./node_modules/.bin/ts-node
+
+import { $, fs as normalFs, path } from "zx";
 import { MYSQL_DATA_DIR, MYSQL_DIR } from "./config.js";
+
+$.verbose = false;
+const fs = normalFs.promises;
 
 type MySQLInstance = {
 	name: string,
@@ -26,10 +31,19 @@ async function main() {
 		port: 8000,
 	})
 
-	$.verbose = false;
-	const output = (await $`ls`).stdout.trim();
+	const existDataDir = await fs
+		.stat(instance.dataDir)
+		.then(() => true)
+		.catch(() => false)
 
-	console.log({ output, instance });
+	if (!existDataDir) {
+		await fs.mkdir(instance.dataDir, { recursive: true })
+	}
+
+
+	const output = (await $`ls ${instance.dataDir}`).stdout.trim();
+
+	console.log(output);
 }
 
 main()
