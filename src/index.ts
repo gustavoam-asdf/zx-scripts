@@ -2,7 +2,11 @@
 
 import { $ } from "zx";
 
-$.verbose = false;
-const output = (await $`ls`).stdout.trim();
+async function main() {
+	$.verbose = false;
+	const output = (await $`ls`).stdout.trim();
 
-console.log(output);
+	console.log(output);
+}
+
+main()
